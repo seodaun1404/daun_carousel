@@ -57,9 +57,6 @@
             mounted(){
                 const ani = document.getElementById("item");
                 let me = this;
-                if(ani){
-                    ani.addEventListener("animationstart",function (){
-                    });
                     ani.addEventListener("animationend",function (){
                         if(me.effect === 'fadeIn'){
                             me.effect = me.effect === 'fadeIn' ? 'fadeOut' : 'fadeIn';
@@ -72,21 +69,12 @@
                             me.changeEffect();
                         }
                     });
-                }
             },
             methods: {
-                changeEffect () {
-                    this.resetAnimation(this.effect);
-                },
-                resetAnimation(effect_name){
+                changeEffect(){
                     const target = document.getElementById('item');
-                    if(effect_name === 'fadeIn'){
-                        target.classList.remove('fadeOut');
-                    }
-                    else if(effect_name === 'fadeOut'){
-                        target.classList.remove('fadeIn');
-                    }
-                    target.classList.remove(effect_name),void target.offsetWidth,target.classList.add(effect_name);
+                    target.classList.remove(this.effect === 'fadeIn' ? 'fadeOut':'fadeIn');
+                    target.classList.remove(this.effect),void target.offsetWidth,target.classList.add(this.effect);
                 }
             },
         })
