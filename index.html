@@ -4,21 +4,105 @@
     <meta charset="UTF-8">
     <title>daun_carousel</title>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+    <style>
+        #item{
+        }
+        #item img {
+            position:absolute;
+            width: 500px;
+            top:0;
+            left: 0;
+        }
+        .fade-enter,
+        fade-leave-to{
+            opacity: 0;
+        }
+        .fade-enter-active,
+        .fade-leave-active
+        {
+            transition: opacity 1s;
+        }
+        @keyframes fadein {
+            from {
+                opacity:0;
+            }
+            to {
+                opacity:1;
+            }
+        }
+        @-moz-keyframes fadein { /* Firefox */
+            from {
+                opacity:0;
+            }
+            to {
+                opacity:1;
+            }
+        }
+        @-webkit-keyframes fadein { /* Safari and Chrome */
+            from {
+                opacity:0;
+            }
+            to {
+                opacity:1;
+            }
+        }
+        @-o-keyframes fadein { /* Opera */
+            from {
+                opacity:0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .fadeIn {
+            animation: fadein 1s;
+            -moz-animation: fadein 1s; /* Firefox */
+            -webkit-animation: fadein 1s; /* Safari and Chrome */
+            -o-animation: fadein 1s; /* Opera */
+        }
+    </style>
 </head>
 <body>
     <div id = "app">
-        <carousel-item v-bind:item = "items"></carousel-item>
+        <carousel-item v-bind:items = "items"></carousel-item>
     </div>
     <script>
-        var data = {counter: 0}
         Vue.component('carousel-item',{
-            props:['item'],
+            props:['items'],
             data: function(){
                 return {
                     counter: 0
                 }
             },
-            template: `<img :src= "item[counter].url" >`
+            template: `
+              <div id = "item">
+                <img :src= "items[counter].url" class = "fadeIn">
+              </div>
+            `,
+            created () {
+                this.timer = setInterval(this.fadeOut, 3000);
+            },
+            mounted(){
+
+            },
+            beforeDestroy () {
+                clearInterval(this.timer);
+            },
+            methods: {
+                fadeOut () {
+                    this.counter = this.counter == this.items.length-1 ? 0 : this.counter+=1;
+                    this.resetAnimation();
+                },
+                cancelAutoUpdate () {
+                    clearInterval(this.timer);
+                },
+                resetAnimation(){
+                    const target = document.getElementById('item');
+                    target.classList.remove("fadeIn"),void target.offsetWidth,target.classList.add("fadeIn");
+                }
+            },
         })
         var app = new Vue({
             el: '#app',
@@ -26,10 +110,11 @@
                 items:[
                     {id:0, url: './images/chicken.jpg'},
                     {id:1, url: './images/dongas.jpeg'},
-                    {id:2, url: './pizza.jpeg'}
+                    {id:2, url: './images/pizza.jpeg'}
                 ],
             }
         })
+
     </script>
 </body>
 </html>
