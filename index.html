@@ -6,22 +6,11 @@
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 
     <style>
-        #item{
-        }
         #item img {
             position:absolute;
             width: 500px;
             top:0;
             left: 0;
-        }
-        .fade-enter,
-        fade-leave-to{
-            opacity: 0;
-        }
-        .fade-enter-active,
-        .fade-leave-active
-        {
-            transition: opacity 1s;
         }
         @keyframes fadein {
             from {
@@ -31,36 +20,19 @@
                 opacity:1;
             }
         }
-        @-moz-keyframes fadein { /* Firefox */
-            from {
-                opacity:0;
-            }
-            to {
-                opacity:1;
-            }
-        }
-        @-webkit-keyframes fadein { /* Safari and Chrome */
-            from {
-                opacity:0;
-            }
-            to {
-                opacity:1;
-            }
-        }
-        @-o-keyframes fadein { /* Opera */
-            from {
-                opacity:0;
-            }
-            to {
-                opacity: 1;
-            }
-        }
-
         .fadeIn {
             animation: fadein 1s;
-            -moz-animation: fadein 1s; /* Firefox */
-            -webkit-animation: fadein 1s; /* Safari and Chrome */
-            -o-animation: fadein 1s; /* Opera */
+        }
+        @keyframes fadeout {
+            from {
+                opacity:1;
+            }
+            to {
+                opacity:0;
+            }
+        }
+        .fadeOut {
+            animation: fadeout 1s;
         }
     </style>
 </head>
@@ -73,7 +45,8 @@
             props:['items'],
             data: function(){
                 return {
-                    counter: 0
+                    counter: 0,
+                    effect:'fadeIn'
                 }
             },
             template: `
@@ -81,26 +54,40 @@
                 <img :src= "items[counter].url" class = "fadeIn">
               </div>
             `,
-            created () {
-                this.timer = setInterval(this.fadeOut, 3000);
-            },
             mounted(){
+                const ani = document.getElementById("item");
+                let me = this;
+                if(ani){
+                    ani.addEventListener("animationstart",function (){
+                    });
+                    ani.addEventListener("animationend",function (){
+                        if(me.effect === 'fadeIn'){
+                            me.effect = me.effect === 'fadeIn' ? 'fadeOut' : 'fadeIn';
+                            setTimeout(me.changeEffect,3000);
+                        }
+                        else if(me.effect === 'fadeOut') {
+                            me.counter = me.counter == me.items.length - 1 ? 0 : me.counter + 1;
+                            me.effect = me.effect === 'fadeIn' ? 'fadeOut' : 'fadeIn';
 
-            },
-            beforeDestroy () {
-                clearInterval(this.timer);
+                            me.changeEffect();
+                        }
+                    });
+                }
             },
             methods: {
-                fadeOut () {
-                    this.counter = this.counter == this.items.length-1 ? 0 : this.counter+=1;
-                    this.resetAnimation();
+                changeEffect () {
+                    this.resetAnimation(this.effect);
                 },
-                cancelAutoUpdate () {
-                    clearInterval(this.timer);
-                },
-                resetAnimation(){
+                resetAnimation(effect_name){
+                    console.log(effect_name);
                     const target = document.getElementById('item');
-                    target.classList.remove("fadeIn"),void target.offsetWidth,target.classList.add("fadeIn");
+                    if(effect_name === 'fadeIn'){
+                        target.classList.remove('fadeOut');
+                    }
+                    else if(effect_name === 'fadeOut'){
+                        target.classList.remove('fadeIn');
+                    }
+                    target.classList.remove(effect_name),void target.offsetWidth,target.classList.add(effect_name);
                 }
             },
         })
@@ -114,7 +101,6 @@
                 ],
             }
         })
-
     </script>
 </body>
 </html>
