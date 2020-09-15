@@ -52,7 +52,7 @@
                 return {
                     counter: 0,
                     effect:'fadeIn',
-                    aniState: 'runnung'
+                    aniState: 'running'
                 }
             },
             template: `
@@ -60,7 +60,7 @@
                 <div id = "item">
                   <img :src= "items[counter].url" class = "fadeIn">
                 </div>
-                <button v-on:click="this.changeState">Stop</button>
+                <button v-on:click="this.changeAniState">{{ aniState === 'running' ? 'pause':'running'}}</button>
               </div>
             `,
             mounted(){
@@ -83,11 +83,11 @@
                     target.classList.remove(this.effect === 'fadeIn' ? 'fadeOut':'fadeIn');
                     target.classList.remove(this.effect),target.classList.add(this.effect);
                 },
-                changeState(){
+                changeAniState(){
                     const target = document.getElementById('item');
                     this.aniState = this.aniState === 'running' ? 'pause' : 'running';
-                    target.classList.remove(this.aniState === 'running' ? 'pause':'running'),
-                        target.classList.add(this.aniState);
+                    target.classList.remove(this.aniState === 'running' ? 'pause':'running');
+                    target.classList.add(this.aniState);
                 }
             },
         })
