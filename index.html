@@ -31,25 +31,36 @@
         .fadeOut {
             animation: fadeout 1s;
         }
+
+        .pause{
+            animation-play-state: paused;
+        }
+        .running{
+            animation-play-state: running;
+        }
     </style>
 </head>
 <body>
     <div id = "app">
-        <carousel-item v-bind:items = "items"></carousel-item>
-        <button>Stop</button>
+        <fade-io-slider v-bind:items = "items"></fade-io-slider>
+
     </div>
     <script>
-        Vue.component('carousel-item',{
+        Vue.component('fade-io-slider',{
             props:['items'],
             data: function(){
                 return {
                     counter: 0,
-                    effect:'fadeIn'
+                    effect:'fadeIn',
+                    aniState: 'runnung'
                 }
             },
             template: `
-              <div id = "item">
-                <img :src= "items[counter].url" class = "fadeIn">
+              <div id = "fade-io-slider">
+                <div id = "item">
+                  <img :src= "items[counter].url" class = "fadeIn">
+                </div>
+                <button v-on:click="this.changeState">Stop</button>
               </div>
             `,
             mounted(){
@@ -57,13 +68,10 @@
                 let me = this;
                     ani.addEventListener("animationend",function (){
                         if(me.effect === 'fadeIn'){
-                            me.effect = me.effect === 'fadeIn' ? 'fadeOut' : 'fadeIn';
                             setTimeout(me.changeEffect,3000);
                         }
                         else if(me.effect === 'fadeOut') {
                             me.counter = me.counter == me.items.length - 1 ? 0 : me.counter + 1;
-                            me.effect = me.effect === 'fadeIn' ? 'fadeOut' : 'fadeIn';
-
                             me.changeEffect();
                         }
                     });
@@ -71,8 +79,15 @@
             methods: {
                 changeEffect(){
                     const target = document.getElementById('item');
+                    this.effect = this.effect === 'fadeIn' ? 'fadeOut' : 'fadeIn';
                     target.classList.remove(this.effect === 'fadeIn' ? 'fadeOut':'fadeIn');
                     target.classList.remove(this.effect),target.classList.add(this.effect);
+                },
+                changeState(){
+                    const target = document.getElementById('item');
+                    this.aniState = this.aniState === 'running' ? 'pause' : 'running';
+                    target.classList.remove(this.aniState === 'running' ? 'pause':'running'),
+                        target.classList.add(this.aniState);
                 }
             },
         })
